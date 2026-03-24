@@ -11,3 +11,35 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+      - mysql
+    environment:
+      MESSENGER_TRANSPORT_DSN: amqp://guest:guest@rabbitmq:5672/%2f/messages
+      DATABASE_URL: mysql://app:app@mysql:3306/notifications
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  mysql:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: notifications
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

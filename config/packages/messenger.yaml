@@ -1,0 +1,36 @@
+framework:
+  messenger:
+    transports:
+      notifications_email:
+        dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+        options:
+          exchange:
+            name: notifications_email
+            type: direct
+          queues:
+            notifications_email: ~
+        retry_strategy:
+          max_retries: 2
+          delay: 30000
+          multiplier: 2
+      notifications_sms:
+        dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+        options:
+          exchange:
+            name: notifications_sms
+            type: direct
+          queues:
+            notifications_sms: ~
+        retry_strategy:
+          max_retries: 2
+          delay: 30000
+          multiplier: 2
+      failed:
+        dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+        options:
+          queues:
+            notifications_failed: ~
+    failure_transport: failed
+    routing:
+      'App\Message\EmailNotificationMessage': notifications_email
+      'App\Message\SmsNotificationMessage': notifications_sms
