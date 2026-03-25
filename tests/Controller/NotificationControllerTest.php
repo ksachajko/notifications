@@ -6,11 +6,28 @@ namespace App\Tests\Controller;
 
 use App\Message\EmailNotificationMessage;
 use App\Message\SmsNotificationMessage;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 
 class NotificationControllerTest extends WebTestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        static::bootKernel();
+        $dbPath = static::getContainer()->getParameter('kernel.project_dir').'/var/test.db';
+        if (file_exists($dbPath)) {
+            unlink($dbPath);
+        }
+
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->createSchema($em->getMetadataFactory()->getAllMetadata());
+        static::ensureKernelShutdown();
+    }
+
     // --- 202 success cases ---
 
     public function testEmailNotificationReturns202(): void

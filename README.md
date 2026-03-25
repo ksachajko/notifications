@@ -45,7 +45,12 @@ docker compose exec php bash
 composer install
 ```
 
-**4. Create RabbitMQ queues and exchanges**
+**4. Run database migrations**
+```bash
+bin/console doctrine:migrations:migrate --no-interaction
+```
+
+**5. Create RabbitMQ queues and exchanges**
 ```bash
 bin/console messenger:setup-transports
 ```

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Audit\AuditLogger;
 use App\Message\SmsNotificationMessage;
 use App\Provider\ProviderException;
 use App\Provider\Sms\SmsProviderInterface;
@@ -17,6 +18,7 @@ class SmsNotificationHandler
     public function __construct(
         private readonly array $providers,
         private readonly LoggerInterface $logger,
+        private readonly AuditLogger $auditLogger,
     ) {
     }
 
@@ -26,6 +28,14 @@ class SmsNotificationHandler
             try {
                 $provider->send($message);
 
+                $this->auditLogger->logProviderSuccess(
+                    $message->correlationId,
+                    'sms',
+                    get_class($provider),
+                    $message->user,
+                    $message->to,
+                );
+
                 return;
             } catch (ProviderException $e) {
                 $this->logger->warning('SMS provider failed, trying next', [
@@ -33,8 +43,24 @@ class SmsNotificationHandler
                     'error' => $e->getMessage(),
                     'to' => $message->to,
                 ]);
+
+                $this->auditLogger->logProviderFailure(
+                    $message->correlationId,
+                    'sms',
+                    get_class($provider),
+                    $message->user,
+                    $message->to,
+                    $e->getMessage(),
+                );
             }
         }
+
+        $this->auditLogger->logAllProvidersFailed(
+            $message->correlationId,
+            'sms',
+            $message->user,
+            $message->to,
+        );
 
         throw new \RuntimeException(sprintf('All SMS providers failed for recipient %s', $message->to));
     }

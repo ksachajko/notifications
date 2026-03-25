@@ -8,6 +8,10 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "aws/aws-sdk-php": "*",
+        "doctrine/dbal": "^4",
+        "doctrine/doctrine-bundle": "*",
+        "doctrine/doctrine-migrations-bundle": "^3.0",
+        "doctrine/orm": "*",
         "symfony/amqp-messenger": "8.0.*",
         "symfony/console": "8.0.*",
         "symfony/dotenv": "8.0.*",
@@ -17,6 +21,7 @@
         "symfony/monolog-bundle": "*",
         "symfony/runtime": "8.0.*",
         "symfony/serializer": "8.0.*",
+        "symfony/uid": "8.0.*",
         "symfony/validator": "8.0.*",
         "symfony/yaml": "8.0.*"
     },

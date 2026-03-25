@@ -1,4 +1,3 @@
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -10,7 +9,6 @@
 ###< symfony/framework-bundle ###
 
 .claude/settings.local.json
-/.php-cs-fixer.cache
 
 ###> friendsofphp/php-cs-fixer ###
 /.php-cs-fixer.php
@@ -20,4 +18,5 @@
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/
+.phpunit.result.cache
 ###< phpunit/phpunit ###
