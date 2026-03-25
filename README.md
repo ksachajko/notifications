@@ -234,9 +234,5 @@ Queues:
 ## TODO
 
 - [ ] **Real SMS provider** — implement `TwilioSmsProvider` (or similar) implementing `SmsProviderInterface`
-- [ ] **Unit tests** — `EmailNotificationHandler`, `SmsNotificationHandler`, provider failover logic
-- [ ] **Integration tests** — `POST /api/notifications` controller (202 and 422 paths)
-- [ ] **AWS SES credentials** — register account, verify sender domain, fill `AWS_*` env vars
 - [ ] **Throttling** *(bonus)* — rate limit notifications per user per channel per hour (e.g. max 300/hour)
 - [ ] **Usage tracking** *(bonus)* — persist a log of sent notifications (user, channel, provider, timestamp, status) to MySQL
-- [ ] **DDD layer** *(bonus)* — introduce a proper domain layer with Aggregate, Value Objects, Domain Events, and Repository interfaces
