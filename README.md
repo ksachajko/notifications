@@ -221,7 +221,40 @@ curl -s -X POST http://localhost:8000/api/notifications \
 
 **Expected:** Worker logs a warning for SES failure, then `PlaceholderEmailProvider: email sent (no-op)` — message is processed successfully and not retried.
 
-**To test real SES delivery:** Fill in `AWS_*` variables in `.env.local` and verify your sender address in the AWS SES console. The `SesEmailProvider` will then send a real email on the first attempt.
+---
+
+### 4. Email — real SES delivery
+
+Requires valid AWS credentials and a verified sender address in SES.
+
+**Prerequisites:**
+- `.env.local` with real `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SES_FROM_EMAIL`
+- Sender address verified in the AWS SES console
+- SES account out of sandbox (or recipient address also verified)
+
+**Start the email worker** (inside container):
+```bash
+bin/console messenger:consume notifications_email -vv
+```
+
+**Send an email notification:**
+```bash
+curl -s -X POST http://localhost:8000/api/notifications \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": 42,
+    "channels": ["email"],
+    "data": {
+      "email": {
+        "to": "recipient@example.com",
+        "subject": "Hello from SES",
+        "body": "Test message"
+      }
+    }
+  }'
+```
+
+**Expected:** Worker logs `SES email sent` — no fallback to `PlaceholderEmailProvider`. Email arrives in the recipient's inbox.
 
 ---
 
@@ -241,3 +274,6 @@ Queues:
 - [ ] **Real SMS provider** — implement `TwilioSmsProvider` (or similar) implementing `SmsProviderInterface`
 - [ ] **Throttling** *(bonus)* — rate limit notifications per user per channel per hour (e.g. max 300/hour)
 - [ ] **Make file or script** to automate common tasks and initial setup as one command
+- [ ] **API docs** — add Swagger/OpenAPI docs
+- [ ] **Return correlation ID in response** — include `correlation_id` in the 202 response body so callers can use it for audit log lookups without parsing headers
+- [ ] **Fix 202 response body** — currently returns `null`; should return a structured JSON body (at minimum `{"correlation_id": "..."}`)
