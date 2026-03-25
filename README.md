@@ -26,6 +26,8 @@ Worker: messenger:consume notifications_sms
             └─> all fail → throw → Messenger retries (30s, 60s) → notifications_failed
 ```
 
+Each step (request received, provider success/failure, all providers failed) is also persisted to the `notification_audit` database table for tracking. See [Audit Log](#audit-log).
+
 ---
 
 ## Setup
@@ -275,6 +277,31 @@ You can observe this in the management UI:
 - After a failure, a `__delay_*` queue appears with 1 message and a countdown
 - After the TTL expires, the message moves back to the main queue
 - After all retries are exhausted, the message appears in `notifications_failed`
+
+---
+
+## Audit Log
+
+Every notification request and its delivery outcome is persisted to the `notification_audit` MySQL table. This allows tracing the full lifecycle of any request using its `correlation_id`.
+
+| Event type | When |
+|---|---|
+| `request_received` | HTTP request accepted (202) |
+| `provider_success` | A provider delivered successfully |
+| `provider_failure` | A provider threw an exception (failover attempted) |
+| `all_providers_failed` | All providers exhausted, message will be retried |
+
+Each row records: `correlation_id`, `event_type`, `user_id`, `channel`, `provider`, `recipient`, `error`, `created_at`.
+
+**Query all events for a request:**
+```sql
+SELECT * FROM notification_audit WHERE correlation_id = '<uuid>' ORDER BY created_at;
+```
+
+**Query all failed deliveries for a user:**
+```sql
+SELECT * FROM notification_audit WHERE user_id = 42 AND event_type = 'all_providers_failed' ORDER BY created_at DESC;
+```
 
 ---
 
