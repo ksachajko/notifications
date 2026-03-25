@@ -9,4 +9,10 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
-.claude/
+.claude/settings.local.json
+/.php-cs-fixer.cache
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
