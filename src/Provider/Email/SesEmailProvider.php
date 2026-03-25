@@ -21,7 +21,7 @@ class SesEmailProvider implements EmailProviderInterface
     ) {
         $this->client = new SesV2Client([
             'version' => 'latest',
-            'region'  => $region,
+            'region' => $region,
         ]);
     }
 
@@ -30,24 +30,20 @@ class SesEmailProvider implements EmailProviderInterface
         try {
             $this->client->sendEmail([
                 'FromEmailAddress' => $this->fromEmail,
-                'Destination'      => [
+                'Destination' => [
                     'ToAddresses' => [$message->to],
                 ],
                 'Content' => [
                     'Simple' => [
                         'Subject' => ['Data' => $message->subject],
-                        'Body'    => ['Text' => ['Data' => $message->body]],
+                        'Body' => ['Text' => ['Data' => $message->body]],
                     ],
                 ],
             ]);
 
             $this->logger->info('SES email sent', ['to' => $message->to]);
         } catch (AwsException $e) {
-            throw new ProviderException(
-                sprintf('SES failed: %s', $e->getMessage()),
-                0,
-                $e,
-            );
+            throw new ProviderException(sprintf('SES failed: %s', $e->getMessage()), 0, $e);
         }
     }
 }

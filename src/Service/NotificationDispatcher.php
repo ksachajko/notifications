@@ -22,7 +22,7 @@ class NotificationDispatcher
         foreach ($request->channels as $channel) {
             match ($channel) {
                 'email' => $this->dispatchEmail($request),
-                'sms'   => $this->dispatchSms($request),
+                'sms' => $this->dispatchSms($request),
                 default => null,
             };
         }

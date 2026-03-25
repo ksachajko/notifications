@@ -25,19 +25,17 @@ class SmsNotificationHandler
         foreach ($this->providers as $provider) {
             try {
                 $provider->send($message);
+
                 return;
             } catch (ProviderException $e) {
                 $this->logger->warning('SMS provider failed, trying next', [
                     'provider' => get_class($provider),
-                    'error'    => $e->getMessage(),
-                    'to'       => $message->to,
+                    'error' => $e->getMessage(),
+                    'to' => $message->to,
                 ]);
             }
         }
 
-        throw new \RuntimeException(sprintf(
-            'All SMS providers failed for recipient %s',
-            $message->to,
-        ));
+        throw new \RuntimeException(sprintf('All SMS providers failed for recipient %s', $message->to));
     }
 }

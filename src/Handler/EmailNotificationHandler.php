@@ -25,19 +25,17 @@ class EmailNotificationHandler
         foreach ($this->providers as $provider) {
             try {
                 $provider->send($message);
+
                 return;
             } catch (ProviderException $e) {
                 $this->logger->warning('Email provider failed, trying next', [
                     'provider' => get_class($provider),
-                    'error'    => $e->getMessage(),
-                    'to'       => $message->to,
+                    'error' => $e->getMessage(),
+                    'to' => $message->to,
                 ]);
             }
         }
 
-        throw new \RuntimeException(sprintf(
-            'All email providers failed for recipient %s',
-            $message->to,
-        ));
+        throw new \RuntimeException(sprintf('All email providers failed for recipient %s', $message->to));
     }
 }

@@ -40,6 +40,7 @@ class NotificationController extends AbstractController
             foreach ($violations as $violation) {
                 $errors[$violation->getPropertyPath()][] = $violation->getMessage();
             }
+
             return $this->json(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 

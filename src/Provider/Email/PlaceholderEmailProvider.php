@@ -26,7 +26,7 @@ class PlaceholderEmailProvider implements EmailProviderInterface
         }
 
         $this->logger->info('PlaceholderEmailProvider: email sent (no-op)', [
-            'to'      => $message->to,
+            'to' => $message->to,
             'subject' => $message->subject,
         ]);
     }
