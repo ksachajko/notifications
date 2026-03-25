@@ -267,6 +267,15 @@ Queues:
 - `notifications_sms` — pending SMS messages
 - `notifications_failed` — messages that exhausted all retries
 
+### Observing retries
+
+Symfony Messenger implements delayed retries using a dedicated delay queue per transport. When a message fails, it is published to a delay queue (e.g. `notifications_sms__delay_30000`) with a TTL matching the retry delay. Once the TTL expires, RabbitMQ moves it back to the main queue for reprocessing.
+
+You can observe this in the management UI:
+- After a failure, a `__delay_*` queue appears with 1 message and a countdown
+- After the TTL expires, the message moves back to the main queue
+- After all retries are exhausted, the message appears in `notifications_failed`
+
 ---
 
 ## TODO
@@ -277,3 +286,4 @@ Queues:
 - [ ] **API docs** — add Swagger/OpenAPI docs
 - [ ] **Return correlation ID in response** — include `correlation_id` in the 202 response body so callers can use it for audit log lookups without parsing headers
 - [ ] **Fix 202 response body** — currently returns `null`; should return a structured JSON body (at minimum `{"correlation_id": "..."}`)
+- [ ] **Better validation error responses** — error keys should reflect the actual failing field (e.g. `data.email` instead of the constraint method name `isDataValid`); update API docs accordingly
