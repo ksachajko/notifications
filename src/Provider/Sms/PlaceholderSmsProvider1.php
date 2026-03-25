@@ -10,20 +10,16 @@ use Psr\Log\LoggerInterface;
 
 class PlaceholderSmsProvider1 implements SmsProviderInterface
 {
-    private bool $shouldFail = false;
-
     public function __construct(private readonly LoggerInterface $logger)
     {
     }
 
     public function send(SmsNotificationMessage $message): void
     {
-        if ($this->shouldFail) {
-            throw new ProviderException('PlaceholderSmsProvider1: simulated failure');
-        }
-
         $this->logger->info('PlaceholderSmsProvider1: SMS sent (no-op)', [
             'to' => $message->to,
         ]);
+
+        throw new ProviderException('PlaceholderSmsProvider1: simulated failure');
     }
 }
