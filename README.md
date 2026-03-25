@@ -59,9 +59,22 @@ The API is now available at `http://localhost:8000`.
 
 ---
 
+## Configuration
+
+### Environment variables
+
+Create a `.env.local` file with your real values:
+
+```
+AWS_ACCESS_KEY_ID=AKIA...
+AWS_SECRET_ACCESS_KEY=secret
+AWS_DEFAULT_REGION=eu-west-1
+AWS_SES_FROM_EMAIL=noreply@example.com
+```
+
 ## Running Workers
 
-Open separate terminal sessions (or run inside the container with `&`):
+Open separate terminal sessions
 
 ```bash
 # Email worker
@@ -72,19 +85,6 @@ bin/console messenger:consume notifications_sms -vv
 ```
 
 ---
-
-## Configuration
-
-### Environment variables (`.env`)
-
-| Variable | Description |
-|---|---|
-| `MESSENGER_TRANSPORT_DSN` | RabbitMQ connection string |
-| `DATABASE_URL` | MySQL connection string |
-| `AWS_ACCESS_KEY_ID` | AWS credentials for SES |
-| `AWS_SECRET_ACCESS_KEY` | AWS credentials for SES |
-| `AWS_DEFAULT_REGION` | AWS region (default: `eu-west-1`) |
-| `AWS_SES_FROM_EMAIL` | Sender address for SES emails |
 
 ### Enable / disable channels (`config/services.yaml`)
 
@@ -221,7 +221,7 @@ curl -s -X POST http://localhost:8000/api/notifications \
 
 **Expected:** Worker logs a warning for SES failure, then `PlaceholderEmailProvider: email sent (no-op)` — message is processed successfully and not retried.
 
-**To test real SES delivery:** Fill in `AWS_*` variables in `.env` and verify your sender address in the AWS SES console. The `SesEmailProvider` will then send a real email on the first attempt.
+**To test real SES delivery:** Fill in `AWS_*` variables in `.env.local` and verify your sender address in the AWS SES console. The `SesEmailProvider` will then send a real email on the first attempt.
 
 ---
 
@@ -240,4 +240,4 @@ Queues:
 
 - [ ] **Real SMS provider** — implement `TwilioSmsProvider` (or similar) implementing `SmsProviderInterface`
 - [ ] **Throttling** *(bonus)* — rate limit notifications per user per channel per hour (e.g. max 300/hour)
-- [ ] **Usage tracking** *(bonus)* — persist a log of sent notifications (user, channel, provider, timestamp, status) to MySQL
+- [ ] **Make file or script** to automate common tasks and initial setup as one command

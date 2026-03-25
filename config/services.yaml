@@ -16,6 +16,8 @@ services:
         arguments:
             $fromEmail: '%env(AWS_SES_FROM_EMAIL)%'
             $region: '%env(AWS_DEFAULT_REGION)%'
+            $accessKeyId: '%env(AWS_ACCESS_KEY_ID)%'
+            $secretAccessKey: '%env(AWS_SECRET_ACCESS_KEY)%'
 
     App\Handler\EmailNotificationHandler:
         arguments:

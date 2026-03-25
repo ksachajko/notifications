@@ -18,10 +18,16 @@ class SesEmailProvider implements EmailProviderInterface
         private readonly string $fromEmail,
         private readonly LoggerInterface $logger,
         string $region,
+        string $accessKeyId,
+        string $secretAccessKey,
     ) {
         $this->client = new SesV2Client([
             'version' => 'latest',
             'region' => $region,
+            'credentials' => [
+                'key' => $accessKeyId,
+                'secret' => $secretAccessKey,
+            ],
         ]);
     }
 
